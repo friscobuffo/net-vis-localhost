@@ -28,10 +28,13 @@ How to add a link:
     - click to the blue top left arrow button (Add Edge)
     - click on a machine and drag the curson to a collision domain
         (it will check if the link is compatible with collision domain ip/netmask)
+    - machine devices for the new link will be assigned incrementally
+        (first link: eth0, second link: eth1, etc.)
 
 To save changes made:
     - click on Update Lab button
     - new lab.conf and .startup files will be in newNetwork folder
 
 Known bugs:
-    assumes in .startup files there are no commands beside systemctl ones and ip address add ones
+    assumes in .startup files there are no commands beside systemctl ones and ip address add ones (things like ip route add will break everything :>)
+    no handling of eliminations of nodes in network (even if button may appear on top left when selecting nodes)
