@@ -1,0 +1,22 @@
+{
+  "name": "net-vis-localhost",
+  "version": "1.0.0",
+  "description": "desc",
+  "main": "visualize.js",
+  "bin": "visualize.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "friscobuffo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "pkg": {
+    "scripts": "static/**/*.js",
+    "targets": [ "node18-linux-x64" ],
+    "assets": "static/**/*",
+    "outputPath": "out"
+  }
+}

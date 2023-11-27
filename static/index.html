@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Network</title>
+        <style type="text/css">
+            #mynetwork {
+                width: 98%;
+                height: 600px;
+                border: 3px solid lightgray;
+            }
+            .menu {
+                margin: 20px;
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                border: 3px solid gray;
+                width: 850px;
+            }
+            .menu-element {
+                margin: 10px;
+            }
+            .horizontal-flex {
+                display: flex;
+            }
+        </style>
+        <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        <script src="static/javascript/utils.js"></script>
+        <script src="static/javascript/lab.js"></script>
+    </head>
+    <body id="body">
+        <div id="mynetwork"></div>
+        <div class="horizontal-flex">
+            <div class="vertical-flex">
+                <div class="menu">
+                    <div class="menu-element">Add Node Menu</div>
+                    <label class="menu-element" for="nodeName">Node name:</label>
+                    <input class="menu-element" type="text" id="nodeName" name="Name" placeholder="computer1">
+                    <label class="menu-element" for="nodeType">Node type:</label>
+                    <select class="menu-element" name="nodeType" id="nodeType">
+                        <option value="machine">Machine</option>
+                        <option value="collisionDomain">Collision domain</option>
+                    </select>
+                    <div class="menu-element" id="ipnetmask-div">
+                        <label for="ipnetmask">ip/netmask:</label>
+                        <input type="text" id="ipnetmask" name="ipnetmask" placeholder="127.0.0.1/24">
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="menu-element">Add Edge Menu</div>
+                    <div class="menu-element" id="edgeipdiv">
+                        <label for="edgeip">ip/netmask:</label>
+                        <input type="text" id="edgeip" name="edgeip" placeholder=".35">
+                    </div>
+                </div>
+            </div>
+            <div class="vertical-flex">
+                <div class="menu">
+                    <button class="menu-element" onclick="updateLabFiles()">Update Lab</button>
+                </div>
+            </div>
+        </div>
+        <script src="static/main.js"></script>
+    </body>
+</html>
