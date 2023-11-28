@@ -14,7 +14,7 @@ function keys(array) {
     let keys = new Array();
     for (let i=0; i<array.length; i++) {
         let element = array[i];
-        keys.push(element.key)
+        keys.push(element.key);
     }
     return keys;
 }
@@ -44,9 +44,9 @@ function walk(startingAbsolutePath, startingRelativePath) {
     return results;
 }
 
-fileNamesList = walk(thisDirectoryPath, "");
+let fileNamesList = walk(thisDirectoryPath, "");
 
-app = express();
+let app = express();
 
 app.use(express.json());
 app.use("/network", express.static(thisDirectoryPath));
@@ -100,25 +100,3 @@ function updateLab(labJson) {
     fs.writeFileSync(labConfFilePath, labConf);
     console.log("updated\n");
 }
-
-// process.stdin.resume(); // so the program will not close instantly
-
-// function exitHandler(options, exitCode) {
-//     server.close();
-//     if (options.cleanup) console.log('clean');
-//     if (exitCode || exitCode === 0) console.log(exitCode);
-//     if (options.exit) process.exit();
-// }
-
-// // do something when app is closing
-// process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-// // catches ctrl+c event
-// process.on('SIGINT', exitHandler.bind(null, {exit:true}));
-
-// // catches "kill pid" (for example: nodemon restart)
-// process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
-// process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
-
-// // catches uncaught exceptions
-// process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

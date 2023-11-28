@@ -1,3 +1,7 @@
+import { readFile, ArrayMap, generaliseIp } from "./utils.js";
+
+const labConfFile = "lab.conf";
+
 class Machine {
     constructor(name) {
         this.name = name;
@@ -117,3 +121,5 @@ class Lab {
         }
     }
 }
+
+export { Machine, Lab }

@@ -75,7 +75,7 @@ function netmask2bitNetmask(n) {
         netmask += "1";
     for (let i=0; i<32-n; i++)
         netmask += "0";
-    output = "";
+    let output = "";
     for (let i=0; i<32; i++) {
         output += netmask[i];
         if (i==7 || i==15 || i==23) output += ".";
@@ -151,3 +151,5 @@ function ipNetmaskMakesSense(ipNetmask) {
 
 
 }
+
+export { readFile, sendPost, ArrayMap, generaliseIp }

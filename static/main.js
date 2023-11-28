@@ -1,16 +1,15 @@
+import { Machine, Lab } from "./javascript/lab.js";
+import { ArrayMap } from "./javascript/utils.js";
+
 const serverUrl = "http://localhost:8000/";
 
 const staticFolder = "static/";
 const networkFolder = "network/";
 const imagesFolder = staticFolder + "images/";
 
-const staticUrl = serverUrl + staticFolder;
 const networkUrl = serverUrl + networkFolder;
-const imagesUrl = serverUrl + imagesFolder;
 
 const filesListUrl = "filesList";
-
-const labConfFile = "lab.conf";
 
 let lab = new Lab(filesListUrl, networkUrl);
 
