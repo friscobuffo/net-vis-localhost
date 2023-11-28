@@ -12,8 +12,8 @@ class Machine {
 }
 
 class Lab {
-    constructor(filesListUrl, networkUrl) {
-        this.networkUrl = networkUrl;
+    constructor(filesListUrl, labUrl) {
+        this.labUrl = labUrl;
         this.customLans = []; // lans not belonging to any collision domain
         this.allIps = []; // list of all machine's ips
         this.collisionDomains = []; // list of all collision domains
@@ -34,7 +34,7 @@ class Lab {
     }
 
     readNetworkFile(networkFilePath) {
-        return readFile(this.networkUrl + networkFilePath);
+        return readFile(this.labUrl + networkFilePath);
     }
 
     // get machine from lab given machineName
@@ -89,7 +89,7 @@ class Lab {
             for (let j=0; j<startupFileLines.length; j++) {
                 let line = startupFileLines[j];
                 if (!line) continue;
-                if (line.startsWith("systemctl")) continue;
+                if (!line.startsWith("ip address add") && !line.startsWith("ip a add")) continue;
                 let tokens = line.split(" "); // assuming line is "ip address add 12.12.12.12/12 dev eth0"
                 let device = tokens[5];
                 let ipNetmask = tokens[3];
@@ -119,6 +119,34 @@ class Lab {
             if (machine.device2collisionDomain.length > 1) machine.type = "router";
             else machine.type = "computer";
         }
+    }
+
+    addMachine(machineName) {
+        let machine = new Machine(machineName);
+        machine.type = "computer";
+        this.machineNames.push(machineName);
+        this.machines.push(machine);
+    }
+
+    addCollisionDomain(collisionDomainName, ipNetmask) {
+        this.collisionDomains.push(collisionDomainName);
+        ArrayMap.put(this.collisionDomains2ipNetmask, collisionDomainName, ipNetmask);
+    }
+
+    hasMachine(name) {
+        return this.machineNames.includes(name);
+    }
+
+    hasCollisionDomain(name) {
+        return this.collisionDomains.includes(name);
+    }
+
+    removeMachine(machineName) {
+
+    }
+
+    removeCollisionDomain(collisionDomainName) {
+
     }
 }
 

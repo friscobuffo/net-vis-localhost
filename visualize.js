@@ -20,9 +20,8 @@ function keys(array) {
 }
 
 const PORT = 8000;
-const thisDirectoryPath = process.cwd();
-const staticDirectoryPath = path.join(__dirname, "static");
 
+const staticDirectoryPath = path.join(__dirname, "static");
 const indexPath = path.join(staticDirectoryPath, 'index.html');
 
 let html = fs.readFileSync(indexPath, 'utf8');
@@ -44,9 +43,10 @@ function walk(startingAbsolutePath, startingRelativePath) {
     return results;
 }
 
+const thisDirectoryPath = process.cwd();
 let fileNamesList = walk(thisDirectoryPath, "");
 
-let app = express();
+const app = express();
 
 app.use(express.json());
 app.use("/network", express.static(thisDirectoryPath));

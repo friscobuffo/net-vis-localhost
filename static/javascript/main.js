@@ -1,5 +1,5 @@
-import { Machine, Lab } from "./javascript/lab.js";
-import { ArrayMap } from "./javascript/utils.js";
+import { Machine, Lab } from "./lab.js";
+import { ArrayMap } from "./utils.js";
 
 const serverUrl = "http://localhost:8000/";
 
@@ -68,11 +68,11 @@ var options = {
                 alert("node name is empty");
                 return;
             }
-            if (lab.collisionDomains.includes(nodeName)) {
+            if (lab.hasCollisionDomain(nodeName)) {
                 alert("node name already used for a collision domain");
                 return;
             }
-            if (lab.machineNames.includes(nodeName)) {
+            if (lab.hasMachine(nodeName)) {
                 alert("node name already used for a machine");
                 return;
             }
@@ -88,17 +88,13 @@ var options = {
                 // should add a lab function to assert if given ip/netmask makes sense
                 nodeData.color = collisionDomainColor;
                 callback(nodeData);
-                lab.collisionDomains.push(nodeName);
-                ArrayMap.put(lab.collisionDomains2ipNetmask, nodeName, ipNetmask);
+                lab.addCollisionDomain(nodeData, ipNetmask);
             }
             else { // nodeType machine
-                let machine = new Machine(nodeName);
                 nodeData.shape = "image";
-                machine.type = "computer";
                 nodeData.image = computerImageLocation;
                 callback(nodeData);
-                lab.machineNames.push(nodeName);
-                lab.machines.push(machine);
+                lab.addMachine(nodeName);
             }
         },
         addEdge: function(edgeData, callback) {
@@ -136,6 +132,21 @@ var options = {
             ArrayMap.put(machine.device2ipNetmask, device, wantedCompleteIpNetmask)
             if (machine.device2collisionDomain.length > 1) machine.type = "router";
             else machine.type = "computer";
+        },
+        deleteNode: function(data, callback) {
+            console.log(data)
+            let nodes = data.nodes;
+            let edges = data.edges;
+            for (let i=0; i<nodes.length; i++) {
+                let node = nodes[i];
+                if (lab.hasMachine(node)) lab.removeMachine(node);
+                if (lab.hasCollisionDomain(node)) lab.removeCollisionDomain(node);
+            }
+            for (let i=0; i<edges.length; i++) {
+                let edge = edges[i];
+                
+            }
+            // callback(data)
         }
     }
 };
