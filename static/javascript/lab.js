@@ -129,6 +129,8 @@ class Lab {
     }
 
     addCollisionDomain(collisionDomainName, ipNetmask) {
+        console.log(collisionDomainName);
+        console.log(ipNetmask);
         this.collisionDomains.push(collisionDomainName);
         ArrayMap.put(this.collisionDomains2ipNetmask, collisionDomainName, ipNetmask);
     }

@@ -152,4 +152,4 @@ function ipNetmaskMakesSense(ipNetmask) {
 
 }
 
-export { readFile, sendPost, ArrayMap, generaliseIp }
+export { readFile, sendPost, ArrayMap, generaliseIp, subIpCompatible }

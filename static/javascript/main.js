@@ -1,5 +1,5 @@
-import { Machine, Lab } from "./lab.js";
-import { ArrayMap } from "./utils.js";
+import { Lab } from "./lab.js";
+import { ArrayMap, subIpCompatible } from "./utils.js";
 
 const serverUrl = "http://localhost:8000/";
 
@@ -88,7 +88,7 @@ var options = {
                 // should add a lab function to assert if given ip/netmask makes sense
                 nodeData.color = collisionDomainColor;
                 callback(nodeData);
-                lab.addCollisionDomain(nodeData, ipNetmask);
+                lab.addCollisionDomain(nodeName, ipNetmask);
             }
             else { // nodeType machine
                 nodeData.shape = "image";
