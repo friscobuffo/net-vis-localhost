@@ -84,9 +84,9 @@ function updateLab(labJson) {
         let keysArray = keys(machine.device2collisionDomain);
         for (let j=0; j<keysArray.length; j++) {
             // lab.conf updates
-            let key = `eth${j}`;
+            let key = keysArray[j];
             let collisionDomain = get(machine.device2collisionDomain, key);
-            let labConfLine = `${machine.name}[${j}]=${collisionDomain}\n`;
+            let labConfLine = `${machine.name}[${key.substring(3)}]=${collisionDomain}\n`;
             labConf += labConfLine;
             // .startup file
             let ip = get(machine.device2ipNetmask, key);

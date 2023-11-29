@@ -34,7 +34,3 @@ How to add a link:
 To save changes made:
     - click on Update Lab button
     - new lab.conf and .startup files will be in newNetwork folder
-
-Known bugs:
-    assumes in .startup files there are no commands beside systemctl ones and ip address add ones (things like ip route add will break everything :>)
-    no handling of eliminations of nodes in network (even if button may appear on top left when selecting nodes)

@@ -55,6 +55,26 @@ class ArrayMap {
         }
         return values;
     }
+    static removeFirstValue(array, value) {
+        for (let i=0; i<array.length; i++) {
+            if (array[i].value === value) {
+                let key = array[i].key;
+                array.splice(i, 1);
+                return key;
+            }
+        }
+        return null;
+    }
+    static removeKey(array, key) {
+        for (let i=0; i<array.length; i++) {
+            if (array[i].key === key) {
+                let value = array[i].value;
+                array.splice(i, 1);
+                return value
+            }
+        }
+        return null;
+    }
 }
 
 // decimal to binary
@@ -119,7 +139,10 @@ function generaliseIp(ip, netmask) {
 // if yes returns the machine ip, if no returns undefined
 // accepts sub ips even without the first dot "." (example 7 or 12.23)
 // in theory sub ip can be a full ip, not tested tho
-function subIpCompatible(ip, netmask, wantedSubIp) {
+function subIpCompatible(ipNetmask, wantedSubIp) {
+    let ip = ipNetmask.split("/")[0];
+    let netmask = ipNetmask.split("/")[1];
+    
     let wantedSubIps = wantedSubIp.split(".");
     let subIps = ip.split(".");
     let subDots = wantedSubIps.length;

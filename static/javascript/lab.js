@@ -7,7 +7,30 @@ class Machine {
         this.name = name;
         this.device2collisionDomain = new Array(); // actually a MAP implemented with an array
         this.device2ipNetmask = new Array(); // actually a MAP implemented with an array
-        this.type; // router - pc
+    }
+
+    getNextFreeDevice() {
+        let devices = ArrayMap.keys(this.device2collisionDomain);
+        devices.sort();
+        for (let i=0; i<devices.length; i++) {
+            let device = devices[i];
+            if (`eth${i}` < device)
+                return `eth${i}`;
+        }
+        return `eth${devices.length}`;
+    }
+
+    addLink(collisionDomainName, ipNetmask) {
+        let device = this.getNextFreeDevice();
+        ArrayMap.put(this.device2collisionDomain, device, collisionDomainName);
+        ArrayMap.put(this.device2ipNetmask, device, ipNetmask);
+    }
+
+    removeLinkWithCollisionDomain(collisionDomain) {
+        let device = ArrayMap.removeFirstValue(this.device2collisionDomain, collisionDomain);
+        if (device)
+            ArrayMap.removeKey(this.device2ipNetmask, device);
+        return device;
     }
 }
 
@@ -27,7 +50,6 @@ class Lab {
         if (fileNames.includes("lab.conf")) {
             this.getLabTopology();
             this.setupMachinesIp(fileNames);
-            this.assignMachinesType();
         }
         if (this.errors.length)
             console.log(this.errors);
@@ -83,7 +105,6 @@ class Lab {
                 this.machineNames.push(machineName);
             }
             let machine = this.getMachine(machineName);
-            machine.type = "computer";
             let startupFile = this.readNetworkFile(fileName);
             let startupFileLines = startupFile.split("\n");
             for (let j=0; j<startupFileLines.length; j++) {
@@ -113,26 +134,23 @@ class Lab {
         }
     }
 
-    assignMachinesType() {
-        for (let i=0; i<this.machines.length; i++) {
-            let machine = this.machines[i];
-            if (machine.device2collisionDomain.length > 1) machine.type = "router";
-            else machine.type = "computer";
-        }
-    }
-
     addMachine(machineName) {
         let machine = new Machine(machineName);
-        machine.type = "computer";
         this.machineNames.push(machineName);
         this.machines.push(machine);
     }
 
     addCollisionDomain(collisionDomainName, ipNetmask) {
-        console.log(collisionDomainName);
-        console.log(ipNetmask);
         this.collisionDomains.push(collisionDomainName);
         ArrayMap.put(this.collisionDomains2ipNetmask, collisionDomainName, ipNetmask);
+    }
+
+    addLinkFromMachineToCollisionDomain(machineName, collisionDomainName, ipNetmask) {
+        this.getMachine(machineName).addLink(collisionDomainName, ipNetmask);
+    }
+
+    removeLinkFromMachineToCollisionDomain(machineName, collisionDomainName) {
+        this.getMachine(machineName).removeLinkWithCollisionDomain(collisionDomainName)
     }
 
     hasMachine(name) {
@@ -143,12 +161,21 @@ class Lab {
         return this.collisionDomains.includes(name);
     }
 
-    removeMachine(machineName) {
+    hasIp(ip) {
+        return this.allIps.includes(ip);
+    }
 
+    removeMachine(machineName) {
+        let machine = this.getMachine(machineName);
+        let i = this.machines.indexOf(machine);
+        let j = this.machineNames.indexOf(machineName);
+        this.machines.splice(i, 1);
+        this.machineNames.splice(j, 1);
     }
 
     removeCollisionDomain(collisionDomainName) {
-
+        for (let i=0; i<this.machines.length; i++)
+            this.machines[i].removeLinkWithCollisionDomain(collisionDomainName);
     }
 }
 

@@ -1,5 +1,5 @@
 import { Lab } from "./lab.js";
-import { ArrayMap, subIpCompatible } from "./utils.js";
+import { ArrayMap, subIpCompatible, sendPost } from "./utils.js";
 
 const serverUrl = "http://localhost:8000/";
 
@@ -15,8 +15,6 @@ let lab = new Lab(filesListUrl, networkUrl);
 
 const collisionDomainColor = '#00ff1e';
 const routerImageLocation = imagesFolder + "router.svg";
-const computerImageLocation = imagesFolder + "computer2.png";
-const serverImageLocation = imagesFolder + "server.jpg";
 
 let nodesArray = [];
 let edgesArray = [];
@@ -31,10 +29,7 @@ for (let i=0; i<lab.collisionDomains.length; i++) {
 // setting up machines (making machine nodes for network representation)
 for (let i=0; i<lab.machines.length; i++) {
     let machine = lab.machines[i];
-    let image;
-    if (machine.type === "router") image=routerImageLocation;
-    else image=computerImageLocation;
-    let node = {id: machine.name, label: machine.name, shape: "image", image: image};
+    let node = {id: machine.name, label: machine.name, shape: "image", image: routerImageLocation};
     nodesArray.push(node);
     // setting up links from machine to collision domains
     let devices = ArrayMap.keys(machine.device2collisionDomain);
@@ -100,63 +95,59 @@ var options = {
         addEdge: function(edgeData, callback) {
             let from = edgeData.from;
             let to = edgeData.to;
-            if (lab.collisionDomains.includes(from) && lab.collisionDomains.includes(to)) {
+            if (lab.hasCollisionDomain(from) && lab.hasCollisionDomain(to)) {
                 alert("cannot connect two collision domains");
                 return;
             }
-            if (lab.machineNames.includes(from) && lab.machineNames.includes(to)) {
+            if (lab.hasMachine(from) && lab.hasMachine(to)) {
                 alert("cannot connect two machines");
                 return;
             }
-            let collisionDomain = lab.collisionDomains.includes(from) ? from : to;
-            let machineName = lab.machineNames.includes(from) ? from : to;
-            let collisionDomainIpNetmask = ArrayMap.get(lab.collisionDomains2ipNetmask, collisionDomain);
+            let collisionDomainName = lab.hasCollisionDomain(from) ? from : to;
+            let machineName = lab.hasMachine(from) ? from : to;
+
+            let collisionDomainIpNetmask = ArrayMap.get(lab.collisionDomains2ipNetmask, collisionDomainName);
             let wantedSubIp = document.getElementById("edgeip").value;
-            let collisionDomainIp = collisionDomainIpNetmask.split("/")[0];
-            let collisionDomainNetmask = collisionDomainIpNetmask.split("/")[1];
-            let wantedCompleteIp = subIpCompatible(collisionDomainIp, collisionDomainNetmask, wantedSubIp);
+
+            let wantedCompleteIp = subIpCompatible(collisionDomainIpNetmask, wantedSubIp);
             if (!wantedCompleteIp) {
                 alert(wantedSubIp + " not compatible with collision domain ip");
                 return;
             }
-            if (lab.allIps.includes(wantedCompleteIp)) {
+            if (lab.hasIp(wantedCompleteIp)) {
                 alert(wantedCompleteIp + " already in use");
                 return;
             }
-            let wantedCompleteIpNetmask = wantedCompleteIp + "/" + collisionDomainNetmask;
+            let wantedCompleteIpNetmask = wantedCompleteIp + "/" + collisionDomainIpNetmask.split("/")[1];
             edgeData.label = wantedCompleteIpNetmask;
             callback(edgeData);
-            let machine = lab.getMachine(machineName);
-            let device = "eth" + machine.device2collisionDomain.length;
-            ArrayMap.put(machine.device2collisionDomain, device, collisionDomain);
-            ArrayMap.put(machine.device2ipNetmask, device, wantedCompleteIpNetmask)
-            if (machine.device2collisionDomain.length > 1) machine.type = "router";
-            else machine.type = "computer";
+            lab.addLinkFromMachineToCollisionDomain(machineName, collisionDomainName, wantedCompleteIpNetmask);
         },
         deleteNode: function(data, callback) {
-            console.log(data)
             let nodes = data.nodes;
-            let edges = data.edges;
             for (let i=0; i<nodes.length; i++) {
                 let node = nodes[i];
                 if (lab.hasMachine(node)) lab.removeMachine(node);
-                if (lab.hasCollisionDomain(node)) lab.removeCollisionDomain(node);
+                else if (lab.hasCollisionDomain(node)) lab.removeCollisionDomain(node);
             }
-            for (let i=0; i<edges.length; i++) {
-                let edge = edges[i];
-                
+            callback(data);
+        },
+        deleteEdge: function(data, callback) {
+            let edgeIds = data.edges;
+            for (let i=0; i<edgeIds.length; i++) {
+                let edge = edges.get(edgeIds[i]);
+                let from = edge.from;
+                let to = edge.to;
+                let collisionDomainName = lab.hasCollisionDomain(from) ? from : to;
+                let machineName = lab.hasMachine(from) ? from : to;
+                lab.removeLinkFromMachineToCollisionDomain(machineName, collisionDomainName);
             }
-            // callback(data)
+            callback(data);
         }
     }
 };
 
-var network = new vis.Network(container, data, options);
-
-// save changes to configuration files
-function updateLabFiles() {
-    sendPost(lab, "updateLab");
-}
+let network = new vis.Network(container, data, options);
 
 // when adding a collisiondomain pops the menu to insert collision domain ip/netmask
 // when adding a machine this menu is hidden
@@ -167,4 +158,9 @@ document.getElementById("nodeType").addEventListener("click", (event) => {
         document.getElementById("ipnetmask-div").style.display = '';
     else
         document.getElementById("ipnetmask-div").style.display = 'none';
+});
+
+// save changes to configuration files
+document.getElementById("jsUpdateLab").addEventListener("click", (event) => {
+    sendPost(lab, "updateLab");
 });
