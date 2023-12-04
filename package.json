@@ -15,7 +15,8 @@
   "pkg": {
     "scripts": "static/**/*.js",
     "targets": [
-      "node18-linux-x64"
+      "node18-linux-x64",
+      "node18-windows-x64"
     ],
     "assets": "static/**/*",
     "outputPath": "out"
