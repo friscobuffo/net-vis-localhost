@@ -37,7 +37,6 @@ class Machine {
 class Lab {
     constructor(filesListUrl, labUrl) {
         this.labUrl = labUrl;
-        this.customLans = []; // lans not belonging to any collision domain
         this.allIps = []; // list of all machine's ips
         this.collisionDomains = []; // list of all collision domains
         this.machines = [];
@@ -73,6 +72,7 @@ class Lab {
             let line = labConfFileLines[i];
             if (!line) continue; // line is empty
             if (line.startsWith("LAB_")) continue;
+            if (line.startsWith("#")) continue;
             let openSquareBracketIndex = line.indexOf("[");
             let closedSquareBracketIndex = line.indexOf("]");
             if (line.substring(openSquareBracketIndex+1, closedSquareBracketIndex) === "image")
@@ -147,10 +147,23 @@ class Lab {
 
     addLinkFromMachineToCollisionDomain(machineName, collisionDomainName, ipNetmask) {
         this.getMachine(machineName).addLink(collisionDomainName, ipNetmask);
+        let ip = ipNetmask.split("/")[0];
+        this.allIps.push(ip)
     }
 
     removeLinkFromMachineToCollisionDomain(machineName, collisionDomainName) {
-        this.getMachine(machineName).removeLinkWithCollisionDomain(collisionDomainName)
+        let machine = this.getMachine(machineName)
+        let devices = ArrayMap.keys(this.device2collisionDomain);
+        for (let i=0; i<devices.length; i++) {
+            let device = devices[i];
+            if (ArrayMap.get(machine.device2collisionDomain, device) === collisionDomainName) {
+                var ipNetmask = ArrayMap.get(machine.device2ipNetmask, device)
+                break
+            }
+        }
+        let index = this.allIps.indexOf(ipNetmask);
+        this.allIps.splice(index, 1);
+        machine.removeLinkWithCollisionDomain(collisionDomainName)
     }
 
     hasMachine(name) {

@@ -39,6 +39,12 @@ for (let i=0; i<lab.machines.length; i++) {
         edgesArray.push(edge);
     }
 }
+console.log("lab:")
+console.log(lab)
+console.log("nodes array:")
+console.log(nodesArray)
+console.log("edges array:")
+console.log(edgesArray)
 
 let nodes = new vis.DataSet(nodesArray);
 let edges = new vis.DataSet(edgesArray);
@@ -87,7 +93,7 @@ var options = {
             }
             else { // nodeType machine
                 nodeData.shape = "image";
-                nodeData.image = computerImageLocation;
+                nodeData.image = routerImageLocation;
                 callback(nodeData);
                 lab.addMachine(nodeName);
             }

@@ -16,7 +16,8 @@
     "scripts": "static/**/*.js",
     "targets": [
       "node18-linux-x64",
-      "node18-windows-x64"
+      "node18-windows-x64",
+      "node18-macos-x64"
     ],
     "assets": "static/**/*",
     "outputPath": "out"
