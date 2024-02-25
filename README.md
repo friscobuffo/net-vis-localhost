@@ -9,18 +9,18 @@ You can find them in the `out` directory
 How to **build the executables** (in linux machine):  
  - install nodejs 18
  - use npm to install globally pkg
-    > `sudo npm install -g pkg`
+    - `sudo npm install -g pkg`
  - console -> navigate to net-vis-localhost folder
-    > `pkg .`
+    - `pkg .`
  - binary will be in `out` directory
 
 How to **use**:
  - place net-vis-localhost file in lab folder
  - open terminal
  - linux
-    > `./net-vis-localhost-linux`
+    - `./net-vis-localhost-linux`
  - windows
-    > `./net-vis-localhost-win.exe`
+    - `./net-vis-localhost-win.exe`
  - open browser
  - navigate to `http://localhost:8000/`
 
